@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechAdmin - Clientes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-laptop-code fa-2x"></i>
+                <h3>TechAdmin</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="products.html"><i class="fas fa-desktop"></i> Productos</a>
+                </li>
+                <li>
+                    <a href="orders.html"><i class="fas fa-shopping-cart"></i> Pedidos</a>
+                </li>
+                <li class="active">
+                    <a href="clientes.html"><i class="fas fa-users"></i> Clientes</a>
+                </li>
+                <li>
+                    <a href="inventario.html"><i class="fas fa-boxes"></i> Inventario</a>
+                </li>
+                <li>
+                    <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
+                </li>
+                <li>
+                    <a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h2>Clientes</h2>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="Usuario">
+                    <span>Admin</span>
+                    <i class="fas fa-sign-out-alt logout-btn"></i>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Lista de Clientes</h3>
+                    <button class="btn btn-primary" id="addClientBtn"><i class="fas fa-plus"></i> Añadir Cliente</button>
+                </div>
+                <table id="client-list">
+                    <thead>
+                        <tr>
+                            <th>ID Cliente</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CL001</td>
+                            <td>Ana García</td>
+                            <td>ana.g@example.com</td>
+                            <td>987654321</td>
+                            <td>2023-01-15</td>
+                            <td class="btn-group">
+                                <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CL002</td>
+                            <td>Luis Pérez</td>
+                            <td>luis.p@example.com</td>
+                            <td>912345678</td>
+                            <td>2023-02-20</td>
+                            <td class="btn-group">
+                                <button class="btn btn-info btn-sm"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                </table>
+            </div>
+
+            <div class="modal" id="clientModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Añadir/Editar Cliente</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="clientForm">
+                            <div class="form-group">
+                                <label for="clientName">Nombre del Cliente</label>
+                                <input type="text" id="clientName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="clientEmail">Email</label>
+                                <input type="email" id="clientEmail" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="clientPhone">Teléfono</label>
+                                <input type="tel" id="clientPhone" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="clientAddress">Dirección</label>
+                                <textarea id="clientAddress" class="form-control"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar Cliente</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    </body>
+</html>

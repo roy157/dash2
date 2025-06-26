@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechAdmin - Inventario</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-laptop-code fa-2x"></i>
+                <h3>TechAdmin</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="products.html"><i class="fas fa-desktop"></i> Productos</a>
+                </li>
+                <li>
+                    <a href="orders.html"><i class="fas fa-shopping-cart"></i> Pedidos</a>
+                </li>
+                <li>
+                    <a href="clientes.html"><i class="fas fa-users"></i> Clientes</a>
+                </li>
+                <li class="active">
+                    <a href="inventario.html"><i class="fas fa-boxes"></i> Inventario</a>
+                </li>
+                <li>
+                    <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
+                </li>
+                <li>
+                    <a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h2>Inventario</h2>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="Usuario">
+                    <span>Admin</span>
+                    <i class="fas fa-sign-out-alt logout-btn"></i>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>Gestión de Inventario</h3>
+                    <button class="btn btn-primary" id="addProductInventoryBtn"><i class="fas fa-plus"></i> Añadir Producto</button>
+                </div>
+                <table id="inventory-list">
+                    <thead>
+                        <tr>
+                            <th>ID Producto</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Stock</th>
+                            <th>Precio Compra</th>
+                            <th>Última Actualización</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PROD001</td>
+                            <td>Laptop Gamer X200</td>
+                            <td>Laptops</td>
+                            <td><span class="badge badge-success">50</span></td>
+                            <td>$1200.00</td>
+                            <td>2024-05-20</td>
+                            <td class="btn-group">
+                                <button class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PROD002</td>
+                            <td>Monitor Curvo Z50</td>
+                            <td>Monitores</td>
+                            <td><span class="badge badge-warning">12</span></td>
+                            <td>$250.00</td>
+                            <td>2024-06-01</td>
+                            <td class="btn-group">
+                                <button class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PROD003</td>
+                            <td>Teclado Mecánico RGB</td>
+                            <td>Periféricos</td>
+                            <td><span class="badge badge-danger">3</span></td>
+                            <td>$60.00</td>
+                            <td>2024-06-10</td>
+                            <td class="btn-group">
+                                <button class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                        </tr>
+                        </tbody>
+                </table>
+            </div>
+
+            <div class="cards">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Total Productos</h3>
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <div class="card-body">
+                        <h1>250</h1>
+                        <p>Artículos en stock</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Stock Bajo</h3>
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="card-body">
+                        <h1>15</h1>
+                        <p>Productos que necesitan reabastecimiento</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Valor del Inventario</h3>
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="card-body">
+                        <h1>$150,000</h1>
+                        <p>Valor total de la mercancía</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal" id="inventoryProductModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Añadir/Editar Producto</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="inventoryProductForm">
+                            <div class="form-group">
+                                <label for="productNameInv">Nombre del Producto</label>
+                                <input type="text" id="productNameInv" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="productCategoryInv">Categoría</label>
+                                <input type="text" id="productCategoryInv" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="productStockInv">Stock</label>
+                                <input type="number" id="productStockInv" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="productPurchasePriceInv">Precio de Compra</label>
+                                <input type="number" step="0.01" id="productPurchasePriceInv" class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar Producto</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    </body>
+</html>

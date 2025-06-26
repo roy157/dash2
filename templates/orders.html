@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechAdmin - Pedidos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar (igual que en index.html) -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-laptop-code fa-2x"></i>
+                <h3>TechAdmin</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="products.html"><i class="fas fa-desktop"></i> Productos</a>
+                </li>
+                <li class="active">
+                    <a href="orders.html"><i class="fas fa-shopping-cart"></i> Pedidos</a>
+                </li>
+                <li>
+                    <a href="clientes.html"><i class="fas fa-users"></i> Clientes</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fas fa-boxes"></i> Inventario</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fas fa-chart-line"></i> Reportes</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fas fa-cog"></i> Configuración</a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>Gestión de Pedidos</h2>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="Usuario">
+                    <span>Admin</span>
+                    <i class="fas fa-sign-out-alt logout-btn"></i>
+                </div>
+            </div>
+            
+            <!-- Filtros y estadísticas -->
+            <div class="cards" style="margin-bottom: 20px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Total Pedidos</h3>
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="card-body">
+                        <h1 id="total-orders-page">0</h1>
+                        <p id="pending-orders-page">0 pendientes</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Ventas Totales</h3>
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="card-body">
+                        <h1 id="total-sales">$0.00</h1>
+                        <p>Este mes</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Pedidos Hoy</h3>
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="card-body">
+                        <h1 id="today-orders">0</h1>
+                        <p id="today-sales">$0.00</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabla de pedidos -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="filters">
+                        <input type="text" placeholder="Buscar pedido..." class="form-control" style="width: 300px;">
+                        <select class="form-control" style="width: 200px;">
+                            <option>Todos los estados</option>
+                            <option>Completado</option>
+                            <option>Procesando</option>
+                            <option>Cancelado</option>
+                        </select>
+                        <input type="date" class="form-control">
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-file-export"></i> Exportar
+                    </button>
+                </div>
+                
+                <table id="orders-table">
+                    <thead>
+                        <tr>
+                            <th>ID Pedido</th>
+                            <th>Cliente</th>
+                            <th>Productos</th>
+                            <th>Total</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los pedidos se cargarán con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalles del pedido -->
+    <div class="modal" id="order-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Detalles del Pedido</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4 style="margin-bottom: 15px;">Pedido #<span id="order-id"></span></h4>
+                
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                    <div>
+                        <h5>Información del Cliente</h5>
+                        <p id="customer-info"></p>
+                        <p id="customer-address"></p>
+                        <p id="customer-phone"></p>
+                    </div>
+                    
+                    <div>
+                        <h5>Información del Pedido</h5>
+                        <p>Fecha: <span id="order-date"></span></p>
+                        <p>Estado: <span id="order-status" class="badge"></span></p>
+                        <p>Método de pago: <span id="payment-method"></span></p>
+                    </div>
+                </div>
+                
+                <h5 style="margin-bottom: 10px;">Productos</h5>
+                <table style="width: 100%; margin-bottom: 20px;">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-products">
+                        <!-- Los productos del pedido se cargarán aquí -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Total:</td>
+                            <td style="font-weight: bold;" id="order-total"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                
+                <div class="form-group">
+                    <label for="order-notes">Notas del pedido</label>
+                    <textarea id="order-notes" class="form-control" rows="3" readonly></textarea>
+                </div>
+                
+                <div style="text-align: right; margin-top: 20px;">
+                    <button type="button" class="btn btn-primary close-modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" id="process-order-btn">Marcar como Completado</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

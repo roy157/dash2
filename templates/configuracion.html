@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechAdmin - Configuración</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-laptop-code fa-2x"></i>
+                <h3>TechAdmin</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="products.html"><i class="fas fa-desktop"></i> Productos</a>
+                </li>
+                <li>
+                    <a href="orders.html"><i class="fas fa-shopping-cart"></i> Pedidos</a>
+                </li>
+                <li>
+                    <a href="clientes.html"><i class="fas fa-users"></i> Clientes</a>
+                </li>
+                <li>
+                    <a href="inventario.html"><i class="fas fa-boxes"></i> Inventario</a>
+                </li>
+                <li>
+                    <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
+                </li>
+                <li class="active">
+                    <a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h2>Configuración</h2>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="Usuario">
+                    <span>Admin</span>
+                    <i class="fas fa-sign-out-alt logout-btn"></i>
+                </div>
+            </div>
+            
+            <div class="form-container">
+                <div class="table-header">
+                    <h3>Configuración General</h3>
+                </div>
+                <form>
+                    <div class="form-group">
+                        <label for="siteName">Nombre del Sitio</label>
+                        <input type="text" id="siteName" class="form-control" value="TechAdmin">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminEmail">Email de Administrador</label>
+                        <input type="email" id="adminEmail" class="form-control" value="admin@techadmin.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="currencySymbol">Símbolo de Moneda</label>
+                        <input type="text" id="currencySymbol" class="form-control" value="$">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+                </form>
+            </div>
+
+            <div class="form-container" style="margin-top: 30px;">
+                <div class="table-header">
+                    <h3>Gestión de Usuarios y Roles</h3>
+                    <button class="btn btn-primary" id="addUserBtn"><i class="fas fa-user-plus"></i> Añadir Usuario</button>
+                </div>
+                <table id="user-management-table">
+                    <thead>
+                        <tr>
+                            <th>ID Usuario</th>
+                            <th>Nombre de Usuario</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>USR001</td>
+                            <td>admin</td>
+                            <td>admin@techadmin.com</td>
+                            <td>Administrador</td>
+                            <td><span class="badge badge-success">Activo</span></td>
+                            <td class="btn-group">
+                                <button class="btn btn-warning btn-sm"><i class="fas fa-user-edit"></i></button>
+                                <button class="btn btn-danger btn-sm"><i class="fas fa-user-times"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>USR002</td>
+                            <td>ventas_user</td>
+                            <td>ventas@techadmin.com</td>
+                            <td>Vendedor</td>
+                            <td><span class="badge badge-success">Activo</span></td>
+                            <td class="btn-group">
+                                <button class="btn btn-warning btn-sm"><i class="fas fa-user-edit"></i></button>
+                                <button class="btn btn-danger btn-sm"><i class="fas fa-user-times"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal" id="userModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Añadir/Editar Usuario</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="userForm">
+                            <div class="form-group">
+                                <label for="username">Nombre de Usuario</label>
+                                <input type="text" id="username" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="userEmail">Email</label>
+                                <input type="email" id="userEmail" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="userPassword">Contraseña</label>
+                                <input type="password" id="userPassword" class="form-control">
+                                <small>Dejar en blanco para no cambiar</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="userRole">Rol</label>
+                                <select id="userRole" class="form-control">
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Vendedor">Vendedor</option>
+                                    <option value="Almacén">Almacén</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar Usuario</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    </body>
+</html>
