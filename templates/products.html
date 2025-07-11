@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechAdmin - Productos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/css_agregar_producto.css') }}">
 </head>
 <body>
     <div class="admin-container">
@@ -16,25 +17,28 @@
             </div>
             <ul class="sidebar-menu">
                 <li>
-                    <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a href="{{ url_for('index') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                 </li>
                 <li class="active">
-                    <a href="products.html"><i class="fas fa-desktop"></i> Productos</a>
+                    <a href="{{ url_for('products_bp.list_products') }}"><i class="fas fa-desktop"></i> Productos</a>
                 </li>
                 <li>
-                    <a href="orders.html"><i class="fas fa-shopping-cart"></i> Pedidos</a>
+                    <a href="{{ url_for('orders_bp.list_orders') }}"><i class="fas fa-shopping-cart"></i> Pedidos</a>
                 </li>
                 <li>
-                    <a href="clientes.html"><i class="fas fa-users"></i> Clientes</a>
+                    <a href="{{ url_for('clients_bp.list_clients') }}"><i class="fas fa-users"></i> Clientes</a>
                 </li>
                 <li>
-                    <a href="inventario.html"><i class="fas fa-boxes"></i> Inventario</a>
+                    <a href="{{ url_for('inventory_bp.list_inventory') }}"><i class="fas fa-boxes"></i> Inventario</a>
                 </li>
                 <li>
-                    <a href="reportes.html"><i class="fas fa-chart-line"></i> Reportes</a>
+                    <a href="{{ url_for('reports_bp.generate_report') }}"><i class="fas fa-chart-line"></i> Reportes</a>
                 </li>
                 <li>
-                    <a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a>
+                    <a href="{{ url_for('main_bp.settings_page') }}"><i class="fas fa-cog"></i> Configuración</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
                 </li>
             </ul>
         </div>
@@ -44,8 +48,8 @@
                 <h2>Gestión de Productos</h2>
                 <div class="user-info">
                     <img src="https://via.placeholder.com/40" alt="Usuario">
-                    <span>Admin</span>
-                    <i class="fas fa-sign-out-alt logout-btn"></i>
+                    <span>{{ current_user.email if current_user.is_authenticated else 'Invitado' }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="logout-btn" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></a>
                 </div>
             </div>
             
@@ -54,12 +58,12 @@
                     <div class="filters">
                         <input type="text" id="productSearchInput" placeholder="Buscar producto..." class="form-control" style="width: 300px;">
                         <select id="productCategoryFilter" class="form-control" style="width: 200px;">
-                            <option value="">Todas las categorías</option>
-                            <option value="Laptops">Laptops</option>
-                            <option value="PCs">PCs</option>
-                            <option value="Monitores">Monitores</option>
-                            <option value="Accesorios">Accesorios</option>
-                            <option value="Componentes">Componentes</option>
+                            <option value="" {% if not selected_category_value %}selected{% endif %}>Todas las categorías</option>
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.id }}" {% if selected_category_value == categoria.id | string %}selected{% endif %}>
+                                    {{ categoria.nombre }}
+                                </option>
+                            {% endfor %}
                         </select>
                     </div>
                     <button class="btn btn-primary" id="addProductBtn" data-modal="add-product-modal">
@@ -80,8 +84,35 @@
                         </tr>
                     </thead>
                     <tbody>
-                        </tbody>
+                        {% for product in productos %}
+                        <tr class="product-row">
+                            <td>{{ product.id }}</td>
+                            <td class="product-name">{{ product.nombre }}</td>
+                            <td>{{ product.categoria.nombre if product.categoria else 'N/A' }}</td>
+                            <td>${{ "%.2f"|format(product.precio) }}</td>
+                            <td>0</td> {# Asumiendo que Ventas es un campo que no se edita directamente aquí #}
+                            <td>{{ product.stock }}</td>
+                            <td class="actions">
+                                <button class="btn-icon edit-product-btn" data-product-id="{{ product.id }}" title="Editar Producto">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                {# Formulario para eliminar, requiere un método POST para mayor seguridad #}
+                                <form action="{{ url_for('products_bp.delete_product', product_id=product.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este producto?');">
+                                    <button type="submit" class="btn-icon" title="Eliminar Producto"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not productos %}
+                        <tr id="no-products-message">
+                            <td colspan="7">No hay productos disponibles.</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
                 </table>
+                <div id="no-filtered-products" style="display: none; text-align: center; padding: 20px; color: #555;">
+                    No se encontraron productos que coincidan con la búsqueda.
+                </div>
             </div>
         </div>
     </div>
@@ -92,42 +123,40 @@
                 <h3>Agregar Nuevo Producto</h3>
                 <button class="close-modal">&times;</button>
             </div>
-            <form id="add-product-form">
+            <form id="add-product-form" action="{{ url_for('products_bp.create_product') }}" method="POST">
                 <div class="form-group">
                     <label for="product-name">Nombre del Producto</label>
-                    <input type="text" id="product-name" class="form-control" required>
+                    <input type="text" id="product-name" name="nombre" class="form-control" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="product-category">Categoría</label>
-                    <select id="product-category" class="form-control" required>
+                    <select id="product-category" name="categoria_id" class="form-control" required>
                         <option value="">Seleccionar categoría</option>
-                        <option value="Laptops">Laptops</option>
-                        <option value="PCs">PCs</option>
-                        <option value="Monitores">Monitores</option>
-                        <option value="Accesorios">Accesorios</option>
-                        <option value="Componentes">Componentes</option>
+                        {% for categoria in categorias %}
+                            <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="product-price">Precio ($)</label>
-                    <input type="number" id="product-price" class="form-control" step="0.01" required>
+                    <input type="number" id="product-price" name="precio" class="form-control" step="0.01" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="product-stock">Stock</label>
-                    <input type="number" id="product-stock" class="form-control" required>
+                    <input type="number" id="product-stock" name="stock" class="form-control" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="product-description">Descripción</label>
-                    <textarea id="product-description" class="form-control" rows="4"></textarea>
+                    <textarea id="product-description" name="descripcion" class="form-control" rows="4"></textarea>
                 </div>
                 
                 <div class="form-group">
                     <label for="product-images">Imágenes</label>
-                    <input type="file" id="product-images" class="form-control" multiple>
+                    <input type="file" id="product-images" name="imagenes" class="form-control" multiple>
                 </div>
                 
                 <div class="form-group" style="text-align: right;">
@@ -138,6 +167,57 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <div class="modal" id="edit-product-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Producto</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="edit-product-form" method="POST"> {# Method POST es correcto para enviar FormData #}
+                <input type="hidden" id="edit-product-id" name="id">
+                <div class="form-group">
+                    <label for="edit-product-name">Nombre del Producto</label>
+                    <input type="text" id="edit-product-name" name="nombre" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-product-category">Categoría</label>
+                    <select id="edit-product-category" name="categoria_id" class="form-control" required>
+                        <option value="">Seleccionar categoría</option>
+                        {% for categoria in categorias %}
+                            <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-product-price">Precio ($)</label>
+                    <input type="number" id="edit-product-price" name="precio" class="form-control" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-product-stock">Stock</label>
+                    <input type="number" id="edit-product-stock" name="stock" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-product-description">Descripción</label>
+                    <textarea id="edit-product-description" name="descripcion" class="form-control" rows="4"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-product-images">Imágenes</label>
+                    <input type="file" id="edit-product-images" name="imagenes" class="form-control" multiple>
+                </div>
+                
+                <div class="form-group" style="text-align: right;">
+                    <button type="button" class="btn btn-danger close-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

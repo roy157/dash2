@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Pedidos - TechAdmin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/orders.css') }}">
+
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-laptop-code fa-2x"></i>
+                <h3>TechAdmin</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{{ url_for('index') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('products_bp.list_products') }}"><i class="fas fa-desktop"></i> Productos</a>
+                </li>
+                <li class="active">
+                    <a href="{{ url_for('orders_bp.list_orders') }}"><i class="fas fa-shopping-cart"></i> Pedidos</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('clients_bp.list_clients') }}"><i class="fas fa-users"></i> Clientes</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('inventory_bp.list_inventory') }}"><i class="fas fa-boxes"></i> Inventario</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('reports_bp.generate_report') }}"><i class="fas fa-chart-line"></i> Reportes</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('main_bp.settings_page') }}"><i class="fas fa-cog"></i> Configuración</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h2>Gestión de Pedidos</h2>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="Usuario">
+                    <span>{{ current_user.email if current_user.is_authenticated else 'Invitado' }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="logout-btn" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            </div>
+
+            <section class="dashboard-cards">
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-shopping-bag"></i></div>
+                    <div class="card-content">
+                        <p class="card-title">Total Pedidos</p>
+                        <p class="card-value">{{ total_pedidos }}</p>
+                        <p class="card-subtext">{{ pedidos_pendientes }} pendientes</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="card-content">
+                        <p class="card-title">Ventas Totales</p>
+                        <p class="card-value">${{ "%.2f"|format(ventas_totales) }}</p>
+                        <p class="card-subtext">Este mes</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-calendar-day"></i></div>
+                    <div class="card-content">
+                        <p class="card-title">Pedidos Hoy</p>
+                        <p class="card-value">{{ pedidos_hoy }}</p>
+                        <p class="card-subtext">${{ "%.2f"|format(ventas_hoy) }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="orders-table-section">
+                <div class="table-controls">
+                    <div class="filters">
+                        <div class="search-box">
+                            <input type="text" id="orderSearchInput" placeholder="Buscar pedido..." class="form-control" style="width: 250px;">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="filter-dropdown">
+                            <select id="orderStatusFilter" class="form-control" style="min-width: 150px;">
+                                <option value="">Todos los estados</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="procesando">Procesando</option>
+                                <option value="enviado">Enviado</option>
+                                <option value="entregado">Entregado</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="filter-dropdown">
+                            <input type="date" id="orderDateFilter" class="form-control" style="min-width: 150px;">
+                        </div>
+                    </div>
+                    <button class="btn export-btn"><i class="fas fa-file-export"></i> Exportar</button>
+                </div>
+
+                <div class="table-container">
+                    {% if pedidos %}
+                        <table id="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>ID Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Dirección Envío</th>
+                                    <th>Total</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pedido in pedidos %}
+                                <tr class="order-row" data-status="{{ pedido.estado | lower }}" data-date="{{ pedido.fecha_pedido.strftime('%Y-%m-%d') }}">
+                                    <td>{{ pedido.id }}</td>
+                                    <td>{{ pedido.cliente.nombre if pedido.cliente else 'Invitado' }}</td>
+                                    <td>{{ pedido.direccion_envio }}</td>
+                                    <td>${{ "%.2f"|format(pedido.total) }}</td>
+                                    <td>{{ pedido.fecha_pedido.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ pedido.estado | lower }}">{{ pedido.estado }}</span>
+                                    </td>
+                                    <td class="actions-cell">
+                                        <button class="btn btn-primary view-order-btn" data-order-id="{{ pedido.id }}">Ver Detalle</button>
+                                        <button class="btn btn-secondary edit-order-btn" data-order-id="{{ pedido.id }}">Editar</button>
+                                        <form action="{{ url_for('orders_bp.delete_order', order_id=pedido.id) }}" method="POST" style="display:inline;">
+                                            <button type="submit" class="btn btn-danger delete-order-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar este pedido?');">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="no-results-message" id="no-orders-message">No hay pedidos registrados.</p>
+                        <p class="no-results-message" id="no-filtered-orders" style="display: none;">No se encontraron pedidos que coincidan con los filtros.</p>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="view-order-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Detalles del Pedido <span id="modal-order-id"></span></h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Cliente:</strong> <span id="modal-client-name"></span> (<span id="modal-client-email"></span>)</p>
+                <p><strong>Teléfono:</strong> <span id="modal-client-phone"></span></p>
+                <p><strong>Fecha del Pedido:</strong> <span id="modal-order-date"></span></p>
+                <p><strong>Dirección de Envío:</strong> <span id="modal-shipping-address"></span></p>
+                <p><strong>Estado:</strong> <span id="modal-order-status" class="status-badge"></span></p>
+                <p><strong>Total:</strong> $<span id="modal-order-total"></span></p>
+
+                <h3>Productos en el Pedido:</h3>
+                <table class="modal-products-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-products-list">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-order-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Pedido <span id="edit-modal-order-id"></span></h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="edit-order-form" method="POST">
+                <input type="hidden" id="edit-order-hidden-id" name="order_id">
+                <input type="hidden" id="edit-order-original-status" name="estado_original">
+
+                <div class="form-group">
+                    <label for="edit-client-select">Cliente:</label>
+                    <select id="edit-client-select" name="cliente_id" class="form-control" required>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-shipping-address">Dirección de Envío:</label>
+                    <input type="text" id="edit-shipping-address" name="direccion_envio" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-order-status">Estado del Pedido:</label>
+                    <select id="edit-order-status" name="estado" class="form-control" required>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="procesando">Procesando</option>
+                        <option value="enviado">Enviado</option>
+                        <option value="entregado">Entregado</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="form-group" style="text-align: right;">
+                    <button type="button" class="btn btn-danger close-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/orders.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Nuevo Pedido</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Estilos generales para el layout */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-container {
+            display: flex;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #34495e; /* Color de tu sidebar */
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .sidebar-header i {
+            color: #ecf0f1;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar-menu li {
+            margin-bottom: 15px;
+        }
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .sidebar-menu a i {
+            margin-right: 10px;
+        }
+        .sidebar-menu a:hover, .sidebar-menu li.active a {
+            background-color: #2c3e50;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .logout-btn {
+            margin-left: 15px;
+            color: #dc3545;
+            font-size: 1.2em;
+            text-decoration: none;
+        }
+        .logout-btn:hover {
+            color: #c82333;
+        }
+
+        /* Estilos específicos del formulario de creación de pedido */
+        .create-order-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .create-order-container h2 {
+            color: #333;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Incluye padding y border en el ancho total */
+        }
+        .product-item {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Espacio entre los elementos del producto */
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .product-item select,
+        .product-item input[type="number"] {
+            flex: 1; /* Para que ocupen el espacio disponible */
+        }
+        .product-item button.remove-product-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+        .product-item button.remove-product-btn:hover {
+            background-color: #c82333;
+        }
+        .add-product-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .add-product-btn:hover {
+            background-color: #218838;
+        }
+        .submit-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+        .back-button {
+            display: inline-block;
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 30px;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+        /* Estilos para los mensajes flash (Toast messages) */
+        .flash-messages {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            position: fixed; /* Lo hace flotante */
+            top: 20px; /* Distancia desde arriba */
+            left: 50%; /* Lo mueve al 50% del ancho del viewport */
+            transform: translateX(-50%); /* Compensa la mitad de su propio ancho para centrarlo */
+            z-index: 1000; /* Asegura que esté por encima de otros elementos */
+            max-width: 400px; /* Ancho máximo para que no ocupe toda la pantalla */
+            width: 90%; /* Ancho responsivo para pantallas pequeñas */
+            text-align: center; /* Centra el texto dentro del mensaje */
+        }
+        .flash-messages li {
+            padding: 12px 20px; /* Un poco más de padding */
+            margin-bottom: 10px;
+            border-radius: 8px; /* Bordes más redondeados */
+            color: #fff;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25); /* Sombra más pronunciada */
+            opacity: 1;
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Animación más lenta */
+            transform: translateY(0); /* Empieza sin transformación vertical */
+            margin-left: auto; /* Centra el li dentro de la ul (si max-width es menor que width) */
+            margin-right: auto;
+        }
+        .flash-messages .success {
+            background-color: #28a745;
+        }
+        .flash-messages .danger {
+            background-color: #dc3545;
+        }
+        .flash-messages .info {
+            background-color: #17a2b8;
+        }
+        .flash-messages .warning {
+            background-color: #ffc107;
+            color: #333;
+        }
+        
+        /* Clases para la animación de salida (JavaScript las añade) */
+        .flash-messages li.fade-out {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-laptop-code fa-2x"></i>
+                <h3>TechAdmin</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{{ url_for('index') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('products_bp.list_products') }}"><i class="fas fa-desktop"></i> Productos</a>
+                </li>
+                <li class="active">
+                    <a href="{{ url_for('orders_bp.list_orders') }}"><i class="fas fa-shopping-cart"></i> Pedidos</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('clients_bp.list_clients') }}"><i class="fas fa-users"></i> Clientes</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('inventory_bp.view_inventory') }}"><i class="fas fa-boxes"></i> Inventario</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('reports_bp.view_reports') }}"><i class="fas fa-chart-line"></i> Reportes</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('main_bp.settings_page') }}"><i class="fas fa-cog"></i> Configuración</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h2>Crear Nuevo Pedido</h2>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="Usuario">
+                    <span>{{ current_user.email if current_user.is_authenticated else 'Invitado' }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="fas fa-sign-out-alt logout-btn"></a>
+                </div>
+            </div>
+            
+            {# BLOQUE PARA MENSAJES FLASH #}
+            <ul class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </ul>
+            {# FIN BLOQUE MENSAJES FLASH #}
+
+            <div class="create-order-container">
+                <form method="POST" action="{{ url_for('orders_bp.create_order') }}">
+                    <div class="form-group">
+                        <label for="cliente_id">Cliente:</label>
+                        <select id="cliente_id" name="cliente_id" required>
+                            <option value="">Selecciona un cliente</option>
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}">{{ cliente.nombre }} ({{ cliente.email }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="direccion_envio">Dirección de Envío:</label>
+                        <input type="text" id="direccion_envio" name="direccion_envio" required placeholder="Ej: Calle Falsa 123, Ciudad, País">
+                    </div>
+
+                    <h3>Productos del Pedido</h3>
+                    <div id="products-container">
+                        <div class="product-item" id="product-item-0">
+                            <select name="producto_id_0" required>
+                                <option value="">Selecciona un producto</option>
+                                {% for producto in productos %}
+                                    <option value="{{ producto.id }}" data-price="{{ producto.precio }}" data-stock="{{ producto.stock }}">
+                                        {{ producto.nombre }} (Stock: {{ producto.stock }}) - ${{ "{:.2f}".format(producto.precio) }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <input type="number" name="cantidad_0" placeholder="Cantidad" min="1" value="1" required>
+                            <button type="button" class="remove-product-btn" onclick="removeProductRow(0)">X</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-product-btn" onclick="addProductRow()">Añadir Otro Producto</button>
+
+                    <button type="submit" class="submit-btn">Crear Pedido</button>
+                </form>
+                <a href="{{ url_for('orders_bp.list_orders') }}" class="back-button">Volver a Pedidos</a>
+            </div>
+        </div>
+    </div>
+
+    {# Script para los mensajes flash #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-messages li');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.classList.add('fade-out');
+                    message.addEventListener('transitionend', () => {
+                        message.remove();
+                    });
+                }, 3000);
+            });
+        });
+
+        // Script para añadir/eliminar productos dinámicamente
+        let productCounter = 0; // Para asignar IDs únicos a cada fila de producto
+
+        function addProductRow() {
+            productCounter++;
+            const productsContainer = document.getElementById('products-container');
+            const newProductItem = document.createElement('div');
+            newProductItem.className = 'product-item';
+            newProductItem.id = `product-item-${productCounter}`;
+            
+            newProductItem.innerHTML = `
+                <select name="producto_id_${productCounter}" required>
+                    <option value="">Selecciona un producto</option>
+                    {% for producto in productos %}
+                        <option value="{{ producto.id }}" data-price="{{ producto.precio }}" data-stock="{{ producto.stock }}">
+                            {{ producto.nombre }} (Stock: {{ producto.stock }}) - ${{ "{:.2f}".format(producto.precio) }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="cantidad_${productCounter}" placeholder="Cantidad" min="1" value="1" required>
+                <button type="button" class="remove-product-btn" onclick="removeProductRow(${productCounter})">X</button>
+            `;
+            productsContainer.appendChild(newProductItem);
+        }
+
+        function removeProductRow(id) {
+            const productItem = document.getElementById(`product-item-${id}`);
+            if (productItem) {
+                productItem.remove();
+            }
+        }
+    </script>
+</body>
+</html>

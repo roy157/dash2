@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0; /* Asegúrate de que no haya márgenes en el body */
+            overflow: hidden; /* Oculta el scrollbar si los mensajes "salen" temporalmente */
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            position: relative; /* Para que los mensajes flash puedan posicionarse relativamente */
+            z-index: 1; /* Asegura que el contenedor de login esté por debajo de los mensajes flash */
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .login-container label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .login-container input[type="email"],
+        .login-container input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .login-container button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilos para los mensajes flash (Toast messages) */
+        .flash-messages {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            position: fixed; /* Lo hace flotante */
+            top: 20px; /* Distancia desde arriba */
+            left: 50%; /* Lo mueve al 50% del ancho del viewport */
+            transform: translateX(-50%); /* Compensa la mitad de su propio ancho para centrarlo */
+            z-index: 1000; /* Asegura que esté por encima de otros elementos */
+            max-width: 400px; /* Ancho máximo para que no ocupe toda la pantalla */
+            width: 90%; /* Ancho responsivo para pantallas pequeñas */
+            text-align: center; /* Centra el texto dentro del mensaje */
+        }
+        .flash-messages li {
+            padding: 12px 20px; /* Un poco más de padding */
+            margin-bottom: 10px;
+            border-radius: 8px; /* Bordes más redondeados */
+            color: #fff;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25); /* Sombra más pronunciada */
+            opacity: 1;
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Animación más lenta */
+            transform: translateY(0); /* Empieza sin transformación vertical */
+            margin-left: auto; /* Centra el li dentro de la ul (si max-width es menor que width) */
+            margin-right: auto;
+        }
+        .flash-messages .success {
+            background-color: #28a745;
+        }
+        .flash-messages .danger {
+            background-color: #dc3545;
+        }
+        .flash-messages .info {
+            background-color: #17a2b8;
+        }
+        .flash-messages .warning { /* Añadido si usas warnings */
+            background-color: #ffc107;
+            color: #333;
+        }
+        
+        /* Clases para la animación de salida (JavaScript las añade) */
+        .flash-messages li.fade-out {
+            opacity: 0;
+            transform: translateY(-50px); /* Se desliza hacia arriba al desaparecer */
+        }
+    </style>
+</head>
+<body>
+    {# BLOQUE PARA MENSAJES FLASH - Colócalo fuera del login-container para que no afecte el centrado del formulario #}
+    <ul class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </ul>
+    {# FIN BLOQUE MENSAJES FLASH #}
+
+    <div class="login-container">
+        <h2>Iniciar Sesión</h2>
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    {# Script para los mensajes flash - Asegúrate de que este script esté después de los mensajes #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-messages li');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.classList.add('fade-out');
+                    message.addEventListener('transitionend', () => {
+                        message.remove();
+                    });
+                }, 2000); // 3000 milisegundos = 3 segundos antes de desaparecer
+            });
+        });
+    </script>
+</body>
+</html>

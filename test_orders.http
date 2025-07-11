@@ -1,0 +1,5 @@
+### Crear un nuevo pedido con productos
+POST http://127.0.0.1:5000/pedidos/crear
+Content-Type: application/x-www-form-urlencoded
+
+cliente_id=1&direccion_envio=Calle Falsa 123&producto_id_1=1&cantidad_1=2&producto_id_2=3&cantidad_2=1

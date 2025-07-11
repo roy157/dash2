@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Pedido {{ order.id }}</title>
+</head>
+<body>
+    <h1>Detalles del Pedido #{{ order.id }}</h1>
+    <p>Cliente: {{ order.cliente.nombre if order.cliente else 'N/A' }}</p>
+    <p>Fecha del Pedido: {{ order.fecha_pedido }}</p>
+    <p>Estado: {{ order.estado }}</p>
+    <p>Total: {{ order.total }}</p>
+
+    <h2>Productos en este Pedido:</h2>
+    <ul>
+        {% for item in order_items %}
+            <li>{{ item.nombre }} - Cantidad: {{ item.cantidad }} - Precio en pedido: {{ item.precio }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('orders_bp.list_orders') }}">Volver a la lista de pedidos</a>
+</body>
+</html>

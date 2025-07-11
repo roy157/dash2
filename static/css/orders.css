@@ -1,0 +1,516 @@
+/* orders.css */
+
+/* Importante: Estas variables pueden ser globales en style.css o definidas aquí */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --text-color: #333;
+    --light-bg: #f4f7f6;
+    --card-bg: #ffffff;
+    --border-color: #e0e0e0;
+}
+
+body {
+    /* Deja esto aquí para que afecte solo la página de pedidos si style.css no lo tiene */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: var(--light-bg); /* Esto sobreescribirá el fondo si style.css tiene uno */
+    color: var(--text-color);
+}
+
+/* Ajusta el margen del main-content para el sidebar si es necesario */
+/* Si tu sidebar en style.css tiene un ancho fijo, este margin-left es crucial */
+.main-content {
+    margin-left: 250px; /* Offset for fixed sidebar (coincide con el ancho del sidebar) */
+    flex-grow: 1;
+    padding: 30px;
+    /* Asegúrate que no haya un padding o margin de conflicto en style.css para .main-content */
+}
+
+/* --- Aquí van todos los demás estilos del "main-content" que me diste --- */
+
+/* Main Content & Header */
+/* Usaremos .header en el HTML, pero si tu style.css ya tiene estilos para .header,
+   estos de orders.css los sobreescribirán si son más específicos o vienen después. */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg);
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 25px;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #2c3e50;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info {
+    font-weight: 500;
+    color: #555;
+}
+
+.logout-btn {
+    font-size: 1.2em;
+    color: var(--danger-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.logout-btn:hover {
+    color: #c0392b;
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+}
+
+.card-icon {
+    font-size: 2.5em;
+    color: var(--primary-color);
+    background-color: #e9f7fe;
+    padding: 15px;
+    border-radius: 50%;
+}
+
+.card-content {
+    flex-grow: 1;
+}
+
+.card-title {
+    margin: 0 0 8px;
+    font-size: 1em;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-value {
+    margin: 0 0 5px;
+    font-size: 2.2em;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.card-subtext {
+    margin: 0;
+    font-size: 0.9em;
+    color: #888;
+}
+
+/* Table Section */
+.orders-table-section {
+    background-color: var(--card-bg);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filters {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box input {
+    padding: 10px 15px 10px 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 0.95em;
+    width: 250px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-box input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+.search-box .fas.fa-search {
+    position: absolute;
+    left: 15px;
+    color: #888;
+}
+
+.filter-dropdown select,
+.filter-dropdown input[type="date"] {
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 0.95em;
+    min-width: 150px;
+    background-color: var(--card-bg);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.filter-dropdown select:focus,
+.filter-dropdown input[type="date"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+.export-btn {
+    background-color: #1abc9c;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.export-btn:hover {
+    background-color: #16a085;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+table thead tr {
+    background-color: #f8f8f8;
+}
+
+table th, table td {
+    padding: 12px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+table th {
+    font-weight: 600;
+    color: #555;
+    white-space: nowrap;
+}
+
+table tbody tr:hover {
+    background-color: #f2f2f2;
+}
+
+.actions-cell {
+    white-space: nowrap;
+}
+
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-right: 5px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn:last-child {
+    margin-right: 0;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+.btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: #95a5a6;
+    color: #fff;
+}
+.btn-secondary:hover {
+    background-color: #7f8c8d;
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: #fff;
+}
+.btn-danger:hover {
+    background-color: #c0392b;
+    transform: translateY(-1px);
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    min-width: 80px;
+}
+
+.status-pendiente { background-color: #f39c12; }
+.status-procesando { background-color: #3498db; }
+.status-enviado { background-color: #8e44ad; }
+.status-entregado { background-color: #2ecc71; }
+.status-cancelado { background-color: #e74c3c; }
+
+/* No Results Messages */
+.no-results-message {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-style: italic;
+}
+
+/* Modals */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    width: 95%;
+    max-width: 800px;
+    position: relative;
+    animation: fadeInScale 0.3s ease-out;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.close-modal {
+    color: #aaa;
+    float: right;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    background: none;
+    line-height: 1;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+    color: #333;
+    text-decoration: none;
+    outline: none;
+}
+
+.modal-body p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.modal-products-table {
+    width: 100%;
+    margin-top: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.modal-products-table th,
+.modal-products-table td {
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    text-align: left;
+}
+
+.modal-products-table thead th {
+    background-color: #f0f0f0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea,
+.form-group input[type="file"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+/* Animations */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 220px; /* Asegura que el sidebar tenga un espacio si el style.css lo reduce */
+        padding: 20px;
+    }
+    .header h2 {
+        font-size: 1.5em;
+    }
+    .dashboard-cards {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    .filters {
+        flex-direction: column;
+        width: 100%;
+    }
+    .search-box input,
+    .filter-dropdown select,
+    .filter-dropdown input[type="date"] {
+        width: 100%;
+        min-width: unset;
+    }
+    .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .export-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    /* No necesitamos tocar .admin-container ni sidebar aquí, ya que style.css los manejará */
+    .main-content {
+        margin-left: 0; /* Para pantallas pequeñas, el main-content no necesita margen del sidebar fijo */
+        padding: 15px;
+    }
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .header-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    .card {
+        flex-direction: column;
+        text-align: center;
+    }
+    .card-icon {
+        margin-bottom: 10px;
+    }
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+        margin-right: 0;
+    }
+    .actions-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    .modal-content {
+        padding: 20px;
+    }
+}
