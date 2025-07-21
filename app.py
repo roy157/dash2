@@ -239,4 +239,4 @@ if __name__ == '__main__':
                 print("VentaProducto de ejemplo creado.")
 
 
-    app.run(debug=True)
+    app.run(debug=False)
