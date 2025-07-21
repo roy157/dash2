@@ -14,7 +14,7 @@ db = SQLAlchemy()
 
 from .user import Usuario
 from .client import Cliente
-from .product import Producto
+from .product import Producto, ImagenProducto
 from .category import Categoria
 from .order import Pedido
 from .payment import Pago

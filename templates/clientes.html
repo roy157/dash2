@@ -30,13 +30,10 @@
                     <a href="{{ url_for('clients_bp.list_clients') }}"><i class="fas fa-users"></i> Clientes</a>
                 </li>
                 <li>
-                    <a href="{{ url_for('inventory_bp.list_inventory') }}"><i class="fas fa-boxes"></i> Inventario</a>
+                    <a href="{{ url_for('reports_bp.view_detailed_reports') }}"><i class="fas fa-chart-line"></i> Reportes</a>
                 </li>
                 <li>
-                    <a href="{{ url_for('reports_bp.generate_report') }}"><i class="fas fa-chart-line"></i> Reportes</a>
-                </li>
-                <li>
-                    <a href="{{ url_for('main_bp.settings_page') }}"><i class="fas fa-cog"></i> Configuración</a>
+                    <a href="{{ url_for('settings.index') }}"><i class="fas fa-cog"></i> Configuración</a>
                 </li>
                 <li>
                     <a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
@@ -48,18 +45,15 @@
             <div class="header">
                 <h2>Clientes</h2> {# Título específico de esta página #}
                 <div class="user-info">
-                    <img src="https://via.placeholder.com/40" alt="Usuario">
+                    <img src="https://via.placeholder.com/40" alt=" ">
                     <span>{{ current_user.email if current_user.is_authenticated else 'Invitado' }}</span>
                     <a href="{{ url_for('auth.logout') }}" class="logout-btn" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></a>
                 </div>
             </div>
 
             <section class="clients-table-section">
-                <div class="table-controls" style="justify-content: flex-end;"> {# Asegura que el botón se alinea a la derecha #}
-                    <button id="add-client-btn" class="btn btn-primary"><i class="fas fa-plus"></i> Añadir Cliente</button>
-                </div>
-
                 <div class="table-container">
+
                     {% if clientes %}
                         <table id="clients-table" class="data-table">
                             <thead>
@@ -81,7 +75,6 @@
                                     <td>{{ cliente.telefono if cliente.telefono else 'N/A' }}</td>
                                     <td>{{ cliente.fecha_registro.strftime('%d/%m/%Y') }}</td>
                                     <td class="actions-cell">
-                                        <button class="btn btn-primary view-client-btn" data-client-id="{{ cliente.id }}" title="Ver Detalle"><i class="fas fa-eye"></i></button>
                                         <button class="btn btn-secondary edit-client-btn" data-client-id="{{ cliente.id }}" title="Editar"><i class="fas fa-edit"></i></button>
                                         <button class="btn btn-danger delete-client-btn" data-client-id="{{ cliente.id }}" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
                                     </td>
@@ -94,55 +87,6 @@
                     {% endif %}
                 </div>
             </section>
-        </div>
-    </div>
-
-    <div id="view-client-modal" class="modal" aria-hidden="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Detalles del Cliente <span id="modal-client-id-display"></span></h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Nombre:</strong> <span id="modal-client-name"></span></p>
-                <p><strong>Email:</strong> <span id="modal-client-email"></span></p>
-                <p><strong>Teléfono:</strong> <span id="modal-client-phone"></span></p>
-                <p><strong>Dirección:</strong> <span id="modal-client-address"></span></p>
-                <p><strong>Fecha de Registro:</strong> <span id="modal-client-registration-date"></span></p>
-            </div>
-        </div>
-    </div>
-
-    <div id="add-client-modal" class="modal" aria-hidden="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Añadir Nuevo Cliente</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="add-client-form">
-                    <div class="form-group">
-                        <label for="add-nombre">Nombre:</label>
-                        <input type="text" id="add-nombre" name="nombre" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="add-email">Email:</label>
-                        <input type="email" id="add-email" name="email" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="add-telefono">Teléfono:</label>
-                        <input type="text" id="add-telefono" name="telefono" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="add-direccion">Dirección:</label>
-                        <textarea id="add-direccion" name="direccion" class="form-control" rows="3"></textarea>
-                    </div>
-                    <div class="form-group modal-actions">
-                        <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar Cliente</button>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 
@@ -171,6 +115,24 @@
                         <label for="edit-direccion">Dirección:</label>
                         <textarea id="edit-direccion" name="direccion" class="form-control" rows="3"></textarea>
                     </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-password">Nueva Contraseña (opcional):</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="edit-password" name="password" class="form-control" placeholder="Dejar en blanco para no cambiar">
+                                <i class="fas fa-eye toggle-password" data-target="#edit-password"></i>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-confirm-password">Confirmar Contraseña:</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="edit-confirm-password" name="confirm_password" class="form-control" placeholder="Dejar en blanco para no cambiar">
+                                <i class="fas fa-eye toggle-password" data-target="#edit-confirm-password"></i>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group modal-actions">
                         <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Actualizar Cliente</button>

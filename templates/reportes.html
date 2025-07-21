@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes{% endblock %}
+{% block page_title %}Reportes Detallados{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Ajustes para el contenedor de filtros, haciéndolo más flexible */
+    .filters-container { 
+        display: flex; 
+        gap: 15px; 
+        align-items: flex-end; /* Alinea los elementos a la parte inferior (útil con labels) */
+        margin-bottom: 20px; 
+        flex-wrap: wrap; 
+        justify-content: flex-start; /* Alinea al inicio */
+    }
+    .filters-container .filter-group { /* Nuevo contenedor para label+input/select */
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    .filters-container .btn { 
+        align-self: flex-end; 
+    }
+    #loading-spinner { text-align: center; padding: 40px; font-style: italic; color: #555; }
+    #no-data-message {
+        text-align: center;
+        padding: 20px;
+        color: #777;
+        font-style: italic;
+        display: none; /* Oculto por defecto */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="table-container">
+    <div class="filters-container">
+        {# Selector de Tipo de Reporte #}
+        <div class="filter-group">
+            <label for="report-type">Tipo de Reporte:</label>
+            <select id="report-type" class="form-control">
+                <option value="pedidos_detallado" selected>Pedidos Detallado</option>
+                <option value="productos_ventas">Productos (Inventario y Ventas)</option>
+                <option value="ventas_por_categoria">Ventas por Categoría</option>
+                <option value="ventas_resumen">Resumen de Ventas</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="start-date">Fecha de Inicio:</label>
+            <input type="date" id="start-date" class="form-control">
+        </div>
+        <div class="filter-group">
+            <label for="end-date">Fecha de Fin:</label>
+            <input type="date" id="end-date" class="form-control">
+        </div>
+        
+        {# Selector de granularidad para reportes de ventas por período (visible solo para "Resumen de Ventas") #}
+        <div class="filter-group" id="granularity-filter" style="display:none;">
+            <label for="period-granularity">Granularidad:</label>
+            <select id="period-granularity" class="form-control">
+                <option value="day" selected>Diario</option>
+                <option value="week">Semanal</option>
+                <option value="month">Mensual</option>
+                <option value="year">Anual</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="sort-by">Ordenar por:</label>
+            <select id="sort-by" class="form-control">
+                {# Las opciones de ordenar serán actualizadas por JavaScript #}
+            </select>
+        </div>
+
+        <button id="filter-btn" class="btn btn-primary">Filtrar</button>
+        <button id="download-btn" class="btn btn-success">Descargar CSV</button>
+    </div>
+
+    <table>
+        <thead id="report-table-head"> {# ID para actualizar el encabezado #}
+            {# El contenido de thead será dinámico por JS #}
+        </thead>
+        <tbody id="report-table-body">
+            {# El contenido de tbody será dinámico por JS #}
+        </tbody>
+    </table>
+    <div id="loading-spinner">Cargando...</div> {# Mostrar por defecto hasta que JS cargue algo #}
+    <div id="no-data-message">No se encontraron datos para los filtros seleccionados.</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+{% endblock %}

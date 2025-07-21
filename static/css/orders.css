@@ -12,27 +12,19 @@
 }
 
 body {
-    /* Deja esto aquí para que afecte solo la página de pedidos si style.css no lo tiene */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    background-color: var(--light-bg); /* Esto sobreescribirá el fondo si style.css tiene uno */
+    background-color: var(--light-bg);
     color: var(--text-color);
 }
 
-/* Ajusta el margen del main-content para el sidebar si es necesario */
-/* Si tu sidebar en style.css tiene un ancho fijo, este margin-left es crucial */
 .main-content {
-    margin-left: 250px; /* Offset for fixed sidebar (coincide con el ancho del sidebar) */
+    margin-left: 250px;
     flex-grow: 1;
     padding: 30px;
-    /* Asegúrate que no haya un padding o margin de conflicto en style.css para .main-content */
 }
 
-/* --- Aquí van todos los demás estilos del "main-content" que me diste --- */
-
 /* Main Content & Header */
-/* Usaremos .header en el HTML, pero si tu style.css ya tiene estilos para .header,
-   estos de orders.css los sobreescribirán si son más específicos o vienen después. */
 .header {
     display: flex;
     justify-content: space-between;
@@ -274,12 +266,13 @@ table tbody tr:hover {
 }
 
 .btn-secondary {
-    background-color: #95a5a6;
-    color: #fff;
+  background-color: #f0f0f0; /* Un gris más claro */
+  color: #333; /* Texto más oscuro */
+  border: 1px solid #ccc; /* Añade un borde sutil */
 }
+
 .btn-secondary:hover {
-    background-color: #7f8c8d;
-    transform: translateY(-1px);
+  
 }
 
 .btn-danger {
@@ -448,7 +441,7 @@ table tbody tr:hover {
 /* Responsive Design */
 @media (max-width: 992px) {
     .main-content {
-        margin-left: 220px; /* Asegura que el sidebar tenga un espacio si el style.css lo reduce */
+        margin-left: 220px;
         padding: 20px;
     }
     .header h2 {
@@ -479,9 +472,8 @@ table tbody tr:hover {
 }
 
 @media (max-width: 768px) {
-    /* No necesitamos tocar .admin-container ni sidebar aquí, ya que style.css los manejará */
     .main-content {
-        margin-left: 0; /* Para pantallas pequeñas, el main-content no necesita margen del sidebar fijo */
+        margin-left: 0;
         padding: 15px;
     }
     .header {
@@ -513,4 +505,14 @@ table tbody tr:hover {
     .modal-content {
         padding: 20px;
     }
+}
+
+/* ESTILOS PARA LAS ACCIONES DEL MODAL */
+.modal-actions {
+  display: flex; /* Activa Flexbox */
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+  gap: 10px; /* Añade un espacio entre los botones */
+  margin-top: 25px; /* Espacio superior */
+  padding-top: 15px; /* Espacio sobre los botones */
+  border-top: 1px solid var(--border-color); /* Línea divisoria (opcional) */
 }

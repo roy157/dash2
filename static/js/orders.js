@@ -110,13 +110,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Cargar clientes en el select
                 const clientSelect = document.getElementById('edit-client-select');
                 clientSelect.innerHTML = ''; // Limpiar opciones previas
-                // Aquí deberías hacer una llamada AJAX para obtener todos los clientes
-                // O si ya los tienes disponibles en una variable global (menos ideal)
-                // Por simplicidad, vamos a asumir que tienes una forma de obtenerlos o los pasas desde el backend
-                // Por ahora, solo añadiremos el cliente actual. Idealmente, cargarías todos los clientes.
                 
-                // Ejemplo de cómo cargar todos los clientes (requiere una ruta API de clientes)
-                const clientsResponse = await fetch('/clientes/api/all'); // Asume esta ruta existe
+                // Fetch all clients for the dropdown
+                const clientsResponse = await fetch('/clientes/api/all'); // Assumes this route exists and returns all clients
                 if (clientsResponse.ok) {
                     const clientsData = await clientsResponse.json();
                     clientsData.forEach(client => {
@@ -127,13 +123,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 } else {
                     console.warn('No se pudieron cargar todos los clientes para el select de edición.');
-                    // Si no se pueden cargar todos, al menos añade el cliente actual
+                    // Fallback: if clients cannot be loaded, at least add the current client
                     const option = document.createElement('option');
                     option.value = data.client.id;
                     option.textContent = data.client.nombre;
                     clientSelect.appendChild(option);
                 }
-                clientSelect.value = data.order.cliente_id; // Seleccionar el cliente del pedido
+                clientSelect.value = data.order.cliente_id; // Select the order's client
 
                 document.getElementById('edit-shipping-address').value = data.order.direccion_envio;
                 document.getElementById('edit-order-status').value = data.order.estado;
@@ -185,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- Lógica para búsqueda y filtrado de la tabla ---
+    // --- Lógica para búsqueda y filtrado de la tabla (MODIFIED) ---
     const orderSearchInput = document.getElementById('orderSearchInput');
     const orderStatusFilter = document.getElementById('orderStatusFilter');
     const orderDateFilter = document.getElementById('orderDateFilter');
@@ -198,20 +194,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const searchTerm = orderSearchInput.value.toLowerCase();
         const selectedStatus = orderStatusFilter.value.toLowerCase();
-        const selectedDate = orderDateFilter.value; // Formato YYYY-MM-DD
+        const selectedDate = orderDateFilter.value; // Format YYYY-MM-DD
 
         let anyRowVisible = false;
         const allRows = ordersTableBody.querySelectorAll('.order-row');
 
         allRows.forEach(row => {
+            // Get all relevant text content from the row for searching
             const orderId = row.cells[0].textContent.toLowerCase();
             const clientName = row.cells[1].textContent.toLowerCase();
-            const orderStatus = row.dataset.status.toLowerCase(); // Usar data-status
-            const orderDate = row.dataset.date; // Usar data-date
+            const shippingAddress = row.cells[2].textContent.toLowerCase();
+            const total = row.cells[3].textContent.toLowerCase(); // Includes "S/"
+            const orderDateDisplay = row.cells[4].textContent.toLowerCase(); // Displayed date and time
+            const orderStatus = row.dataset.status.toLowerCase(); // Use data-status
 
-            const matchesSearch = orderId.includes(searchTerm) || clientName.includes(searchTerm);
+            // Construct a single string with all searchable content for the row
+            const rowContent = `${orderId} ${clientName} ${shippingAddress} ${total} ${orderDateDisplay} ${orderStatus}`;
+
+            const matchesSearch = searchTerm === '' || rowContent.includes(searchTerm);
             const matchesStatus = selectedStatus === '' || orderStatus === selectedStatus;
-            const matchesDate = selectedDate === '' || orderDate === selectedDate;
+            const matchesDate = selectedDate === '' || row.dataset.date === selectedDate; // Use data-date for exact date filter
 
             if (matchesSearch && matchesStatus && matchesDate) {
                 row.style.display = '';
@@ -222,19 +224,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (noOrdersMessage) {
+            // If there are no orders at all (table body is empty or only header)
             noOrdersMessage.style.display = allRows.length === 0 ? 'block' : 'none';
         }
         if (noFilteredOrdersMessage) {
+            // If there are orders, but none match the current filters
             noFilteredOrdersMessage.style.display = anyRowVisible ? 'none' : 'block';
         }
     }
 
-    // Asignar listeners a los elementos de filtro
+    // Assign listeners to filter elements
     if (orderSearchInput) orderSearchInput.addEventListener('keyup', filterOrders);
     if (orderStatusFilter) orderStatusFilter.addEventListener('change', filterOrders);
     if (orderDateFilter) orderDateFilter.addEventListener('change', filterOrders);
 
-    // Ejecutar el filtro inicial al cargar la página
+    // Execute initial filter on page load
     filterOrders();
 
     // --- Lógica para el botón de exportar (ejemplo básico) ---
@@ -242,8 +246,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (exportBtn) {
         exportBtn.addEventListener('click', function() {
             alert('Funcionalidad de exportar aún no implementada. Puedes implementarla para exportar a CSV/Excel.');
-            // Aquí podrías añadir lógica para generar un CSV o PDF
-            // Por ejemplo, hacer una llamada AJAX a una ruta Flask que genere el archivo
+            // Here you could add logic to generate a CSV or PDF
+            // For example, make an AJAX call to a Flask route that generates the file
             // window.location.href = '/pedidos/exportar?status=' + orderStatusFilter.value + '&search=' + orderSearchInput.value;
         });
     }

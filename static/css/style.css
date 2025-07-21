@@ -11,13 +11,6 @@
     --warning: #f39c12;    /* Color de advertencia (naranja) */
     --card-bg: #ffffff;
     --danger-color: #e74c3c;
-    
-    /* Añadidos para botones de tabla, si quieres más control */
-    --btn-icon-border-default: #ccc;
-    --btn-icon-text-default: #555;
-    --btn-icon-hover-bg: #e0e0e0;
-    --btn-icon-hover-text: #333;
-    --btn-icon-hover-border: #a0a0a0;
 }
 
 /* Restablecimiento y configuración base */
@@ -213,6 +206,7 @@ table th, table td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+    vertical-align: middle; /* Centra el contenido de la celda verticalmente */
 }
 
 table th {
@@ -260,9 +254,9 @@ table tr:hover {
 }
 
 
-/* --- Estilos para los BOTONES GENERALES (como "Agregar Producto") --- */
+/* --- Estilos para los BOTONES GENERALES (Aplicarán a "Agregar Producto" y otros botones de texto) --- */
 .btn {
-    padding: 8px 15px;
+    padding: 8px 15px; /* Padding estándar para botones de texto */
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -270,6 +264,9 @@ table tr:hover {
     transition: all 0.3s;
     text-decoration: none;
     display: inline-block;
+    width: auto; /* Aseguramos que no tengan un ancho fijo no deseado */
+    height: auto; /* Aseguramos que no tengan una altura fija no deseada */
+    font-size: 1em; /* Tamaño de fuente estándar */
 }
 
 .btn:hover {
@@ -292,18 +289,52 @@ table tr:hover {
     color: white;
 }
 
+/* Estilo para botones pequeños (btn-sm) */
 .btn-sm {
-    padding: 5px 10px;
-    font-size: 12px;
+    padding: 5px 10px; /* Un padding más pequeño para botones compactos */
+    font-size: 0.85em; /* Tamaño de fuente ligeramente más pequeño */
+    line-height: 1; /* Asegura que la altura de línea no empuje el contenido */
+    /* Aquí definimos el tamaño y la forma circular para los botones de acción en tabla */
+    width: 30px; /* Tamaño compacto para los botones de acción */
+    height: 30px; /* Altura compacta */
+    border-radius: 50%; /* Circular */
+    display: inline-flex; /* Para centrar el ícono */
+    justify-content: center;
+    align-items: center;
 }
+/* Asegura que los íconos dentro de .btn-sm no sean demasiado grandes */
+.btn-sm i {
+    font-size: 0.9em; /* Relativo al font-size del botón, hazlo ligeramente más pequeño */
+    vertical-align: middle; /* Para alinear íconos con texto si hay */
+}
+
+/* Colores específicos para btn-warning y btn-danger con !important para asegurar la prioridad */
+.btn-warning {
+    background-color: var(--warning) !important;
+    color: white !important;
+}
+
+.btn-danger {
+    background-color: var(--danger) !important;
+    color: white !important;
+}
+
 
 .btn-group {
     display: flex;
     gap: 5px;
 }
 
+/* Asegura que el botón "Agregar Producto" en el table-header tenga su tamaño normal */
+.table-header .btn-primary {
+    padding: 8px 15px;
+    font-size: 1em;
+    width: auto;
+    height: auto;
+}
 
-/* --- Estilos para los FORMULARIOS (en general, no solo modales) --- */
+
+/* --- Estilos para los FORMULARIOS (generales, ahora consolidados aquí) --- */
 .form-container {
     background: white;
     border-radius: 5px;
@@ -324,12 +355,12 @@ table tr:hover {
     color: var(--secondary); /* Usa variable */
 }
 
-/* Sobrescribe el form-control base para que sea consistente con el modal si es necesario */
 .form-control {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    box-sizing: border-box; /* Crucial para que padding no afecte el width total */
     font-size: 16px;
 }
 
@@ -343,74 +374,135 @@ textarea.form-control {
     resize: vertical;
 }
 
+/* Estilos de botones de formulario dentro de modales/forms */
+.form-group.buttons {
+    text-align: right;
+    margin-top: 30px;
+}
 
-/* --- Estilos para los BOTONES DE ICONO en la tabla de acciones (Editar y Eliminar) --- */
-.btn-icon {
-    background-color: transparent; /* Fondo transparente por defecto */
-    border: 1px solid var(--btn-icon-border-default); /* Borde sutil usando variable */
-    color: var(--btn-icon-text-default); /* Color del icono por defecto (gris oscuro) usando variable */
-    padding: 8px 12px; /* Espaciado interno */
-    border-radius: 4px; /* Bordes ligeramente redondeados */
-    cursor: pointer;
-    font-size: 1em; /* Tamaño del icono */
-    transition: all 0.2s ease; /* Transición suave para efectos hover */
-    display: inline-flex; /* Para centrar el icono */
+/* AÑADIDO: Estilos para la alineación en filas de formulario */
+.form-row {
+    display: flex; /* Habilita flexbox para alinear elementos en fila */
+    gap: 20px;     /* Espacio entre los grupos de formulario en la fila */
+    margin-bottom: 20px; /* Espacio debajo de la fila */
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+}
+
+/* AÑADIDO: Asegura que los form-group dentro de un form-row tomen el ancho completo en móviles o la mitad en escritorio */
+.form-row .form-group {
+    flex: 1; /* Permite que los grupos de formulario crezcan y se encojan */
+    min-width: 250px; /* Ancho mínimo para evitar que se aplasten demasiado, ajusta si es necesario */
+    margin-bottom: 0; /* Anula el margin-bottom predeterminado si ya está en form-row */
+}
+
+
+/* --- Estilos de MODALES (consolidados aquí para evitar conflictos) --- */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Permanece en la misma posición incluso al hacer scroll */
+    z-index: 1000; /* Se superpone a todo lo demás */
+    left: 0;
+    top: 0;
+    width: 100%; /* Ancho total */
+    height: 100%; /* Altura total */
+    overflow: auto; /* Habilita el scroll si el contenido es demasiado grande */
+    background-color: rgba(0,0,0,0.4); /* Fondo negro semi-transparente */
+    padding-top: 30px; 
+    padding-bottom: 30px; 
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15px auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+    box-sizing: border-box; 
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    margin: 0 3px; /* Pequeño espacio entre botones */
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
 }
 
-.btn-icon:hover {
-    background-color: var(--btn-icon-hover-bg); /* Un gris más oscuro al pasar el ratón usando variable */
-    color: var(--btn-icon-hover-text); /* Color del icono más oscuro al pasar el ratón usando variable */
-    border-color: var(--btn-icon-hover-border); /* Borde más oscuro al pasar el ratón usando variable */
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #333;
 }
 
-/* Estilo específico para el botón de Editar (icono de lápiz) */
-.edit-product-btn {
-    color: var(--accent); /* Color azul para el icono de edición usando variable */
-    border-color: var(--accent); /* Borde azul para el botón de edición usando variable */
+.close-modal {
+    color: #aaa;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
 }
 
-.edit-product-btn:hover {
-    background-color: var(--accent); /* Fondo azul al pasar el ratón usando variable */
-    color: white; /* Texto blanco al pasar el ratón */
+.close-modal:hover,
+.close-modal:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
 
-/* Estilo específico para el botón de Eliminar (icono de papelera) */
-.btn-icon[type="submit"] { /* Esto selecciona los botones de eliminar que son submit */
-    color: var(--danger); /* Rojo para el icono de eliminar usando variable */
-    border-color: var(--danger); /* Borde rojo para el botón de eliminar usando variable */
+/* Animación para el modal */
+@keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
 }
 
-.btn-icon[type="submit"]:hover {
-    background-color: var(--danger); /* Fondo rojo al pasar el ratón usando variable */
-    color: white; /* Texto blanco al pasar el ratón */
+/* Media queries para pantallas más pequeñas para modales */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 10px auto;
+        padding: 15px;
+    }
+    .modal {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .modal-header h3 {
+        font-size: 1.3em;
+    }
+    .close-modal {
+        font-size: 24px;
+    }
+    .btn { /* Esto es para los botones generales dentro de modales */
+        padding: 10px 15px;
+        font-size: 15px;
+    }
 }
+
 
 /* --- Estilos para los INDICADORES DE STOCK (las "píldoras" de color) --- */
 .stock-indicator {
     display: inline-block;
     padding: 5px 10px;
-    border-radius: 20px; /* Para forma de píldora */
+    border-radius: 20px;
     font-weight: bold;
-    color: white; /* Texto blanco por defecto */
-    min-width: 40px; /* Ancho mínimo para consistencia */
+    color: white;
+    min-width: 40px;
     text-align: center;
-    /* Transición para un cambio de color suave si el stock cambia */
     transition: background-color 0.3s ease;
 }
 
-/* Colores para el indicador de stock según el nivel */
-.stock-indicator.high { /* Por ejemplo, stock > un umbral alto (verde) */
-    background-color: var(--success); /* Verde usando variable */
-}
-.stock-indicator.medium { /* Por ejemplo, stock entre umbrales (amarillo/naranja) */
-    background-color: var(--warning); /* Amarillo/Naranja usando variable */
-}
-.stock-indicator.low { /* Por ejemplo, stock < un umbral bajo (rojo) */
-    background-color: var(--danger); /* Rojo usando variable */
-}
+.stock-indicator.high { background-color: var(--success); }
+.stock-indicator.medium { background-color: var(--warning); }
+.stock-indicator.low { background-color: var(--danger); }
+
 
 /* Mensajes de "No hay productos" o "No filtrados" */
 #no-products-message, #no-filtered-products {
@@ -421,45 +513,158 @@ textarea.form-control {
 }
 
 
-/* --- Modal (ESTOS ESTILOS LOS TIENES EN css_agregar_producto.css, pero los dejo aquí
-             comentados por si decides consolidar tus CSS en el futuro) --- */
-/* .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; } */
-/* .modal-content { background: white; border-radius: 5px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); } */
-/* .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ddd; } */
-/* .modal-header h3 { color: var(--primary); } */
-/* .close-modal { background: none; border: none; font-size: 24px; cursor: pointer; color: #7f8c8d; } */
-
-
-/* Responsive (mantienes tus media queries) */
-@media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative; /* Cambia a relativo para que se posicione normalmente */
-    }
-    
-    .main-content {
-        margin-left: 0; /* Elimina el margen izquierdo para pantallas pequeñas */
-        width: 100%;
-    }
-    
-    .cards {
-        grid-template-columns: 1fr;
-    }
-
-    /* También podrías ajustar los botones en móvil si es necesario */
-    .btn-icon {
-        padding: 6px 10px; /* Un poco más pequeños en móvil */
-        font-size: 0.9em;
-    }
+/* Estilos para contenedores de previsualización de imágenes (ahora consolidados aquí) */
+.image-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    min-height: 102px; /* Aumentado para encajar la imagen con borde */
+    align-items: flex-start;
+    justify-content: flex-start;
 }
 
-/* Animations (mantienes tus animaciones) */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.image-preview-container:empty::before {
+    content: "Aquí aparecerán las imágenes seleccionadas";
+    color: #888;
+    font-size: 0.9em;
+    width: 100%;
+    text-align: center;
+    align-self: center;
 }
 
-.fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+/* Contenedor para cada imagen y su botón de eliminar */
+.preview-image-wrapper {
+    position: relative; /* Clave para posicionar el botón de eliminar */
+}
+
+.preview-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+/* Estilo para el botón de eliminar (X) */
+.delete-preview-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 20px;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.delete-preview-btn:hover {
+    background-color: #e53935; /* Rojo al pasar el ratón */
+}
+
+
+/* --- MODIFICADO: Alineación de botones en la celda de acciones --- */
+.actions-cell {
+    padding: 12px 15px; /* Mantenemos el padding estándar de la celda de la tabla */
+    text-align: center; /* Centramos el contenido de la celda horizontalmente */
+    vertical-align: middle; /* Centramos el contenido de la celda verticalmente */
+    border-bottom: 1px solid #ddd; /* Aseguramos que el borde inferior sea visible */
+    white-space: nowrap; /* Evita que los botones de acción se envuelvan */
+}
+
+/* Da la forma cuadrada y centra el contenido de los botones de acción - MOVIDO DE orders.css */
+.actions-cell .btn {
+    width: 38px;              /* Ancho fijo */
+    height: 38px;             /* Alto fijo */
+    padding: 0;               /* Sin padding interno */
+    margin: 0 4px;            /* Espacio entre botones */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;          /* Tamaño del ícono */
+}
+
+/* Contenedor interno para los botones dentro de la celda de acciones */
+.actions-cell .button-group-container {
+    display: flex; /* Para alinear los botones y el formulario horizontalmente */
+    gap: 2px; /* Espacio reducido entre los botones */
+    align-items: center; /* Centra los elementos del grupo verticalmente */
+    justify-content: center; /* Centra el grupo de botones horizontalmente */
+    height: 100%; /* Ocupa toda la altura disponible de la celda para el centrado */
+    width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+/* Asegúrate de que el formulario dentro del grupo también sea flex item */
+.actions-cell form {
+    display: flex; /* Para que el botón dentro del form se alinee bien */
+    margin: 0; /* Elimina márgenes extra del formulario */
+    padding: 0; /* Elimina padding extra del formulario */
+    align-items: center; /* Centra verticalmente el botón dentro del form */
+}
+
+
+/* Clase para el botón de editar gris, en caso de que la necesites. */
+/* Asegúrate de usar <button class="btn btn-light ..."> en tu HTML. */
+.btn-light {
+    background-color: #ecf0f1;
+    color: #34495e;
+}
+
+.btn-light:hover {
+    background-color: #d2d7d9;
+}
+
+
+/* Coloca esto al final de tu style.css */
+
+.table-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* AJUSTADO: Ajuste para la columna de precio - APUNTAMOS AL TH Y TD ESPECÍFICOS */
+#products-table th:nth-child(5), /* Encabezado de Precio */
+#products-table td:nth-child(5) { /* Celda de Precio */
+    min-width: 120px; /* Mantiene un ancho mínimo generoso para evitar descuadres */
+    text-align: right;  /* Alinea los precios a la derecha */
+    padding-right: 15px; /* Añade un poco de espacio a la derecha */
+    box-sizing: border-box; /* Asegura que el padding se incluya en el width/min-width */
+}
+
+/* Centra el texto de los encabezados en la tabla de pedidos */
+#orders-table th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Anula la regla anterior para la columna 'Total' para que su título
+  coincida con la alineación de los precios (a la derecha).
+*/
+#orders-table th.col-total {
+    text-align: right;
+}
+
+/* Opcional: Ajuste para el encabezado de "Acciones" si se ve desalineado con los botones debajo */
+#products-table th:nth-child(8) { /* Encabezado de Acciones */
+    text-align: center; /* Centra el texto "Acciones" */
+}
+
+/* Añade esto al final de tu archivo style.css o en una sección de tablas */
+#report-table-head th:nth-child(3),
+#report-table-body td:nth-child(3) {
+    text-align: center;
 }

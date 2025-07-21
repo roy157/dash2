@@ -7,6 +7,8 @@ from flask_migrate import Migrate
 from flask_login import LoginManager, login_required, current_user
 from datetime import date, datetime, timedelta
 from sqlalchemy import func
+import os # <-- IMPORTACIÓN AÑADIDA
+import cloudinary # <-- IMPORTACIÓN AÑADIDA
 
 # =========================================================
 # IMPORTE DE BLUEPRINTS
@@ -18,6 +20,7 @@ from routes.orders import orders_bp
 from routes.inventory import inventory_bp
 from routes.reports import reports_bp
 from routes.main import main_bp
+from routes.settings import settings_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -31,6 +34,15 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
+
+# <-- BLOQUE DE CONFIGURACIÓN DE CLOUDINARY AÑADIDO -->
+# Es una buena práctica colocarlo junto a otras inicializaciones de servicios.
+cloudinary.config(
+  cloud_name = os.environ.get('CLOUDINARY_CLOUD_NAME', 'dv7iofqda'), 
+  api_key = os.environ.get('CLOUDINARY_API_KEY', '312927972217246'),
+  api_secret = os.environ.get('CLOUDINARY_API_SECRET', 'bKe_P5L16OAtUOdwHZoqLxFRLtw')
+)
+# <-- FIN DEL BLOQUE AÑADIDO -->
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -46,6 +58,7 @@ app.register_blueprint(orders_bp)
 app.register_blueprint(inventory_bp)
 app.register_blueprint(reports_bp)
 app.register_blueprint(main_bp)
+app.register_blueprint(settings_bp) # <-- 2. REGISTRO AÑADIDO
 
 # =========================================================
 # RUTAS PRINCIPALES DEL DASHBOARD (HOME)

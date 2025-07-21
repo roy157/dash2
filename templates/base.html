@@ -1,5 +1,3 @@
-<!-- tienda/templates/base.html --> 
- 
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,16 +10,48 @@
 </head>
 <body>
     <div class="admin-container">
-        {% include 'dashboard/partials/sidebar.html' %}
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-laptop-code fa-2x"></i>
+                <h3>TechAdmin</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="{{ 'active' if request.endpoint == 'index' else '' }}">
+                    <a href="{{ url_for('index') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                </li>
+                <li class="{{ 'active' if request.endpoint.startswith('products_bp.') else '' }}">
+                    <a href="{{ url_for('products_bp.list_products') }}"><i class="fas fa-desktop"></i> Productos</a>
+                </li>
+                <li class="{{ 'active' if request.endpoint.startswith('orders_bp.') else '' }}">
+                    <a href="{{ url_for('orders_bp.list_orders') }}"><i class="fas fa-shopping-cart"></i> Pedidos</a>
+                </li>
+                <li class="{{ 'active' if request.endpoint.startswith('clients_bp.') else '' }}">
+                    <a href="{{ url_for('clients_bp.list_clients') }}"><i class="fas fa-users"></i> Clientes</a>
+                </li>
+                <li class="{{ 'active' if request.endpoint.startswith('reports_bp.') else '' }}">
+                    <a href="{{ url_for('reports_bp.view_detailed_reports') }}"><i class="fas fa-chart-line"></i> Reportes</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('settings.index') }}"><i class="fas fa-cog"></i> Configuración</a>
+                </li>
+                <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
+        </div>
         
         <div class="main-content">
-            {% include 'dashboard/partials/header.html' %}
+            <div class="header">
+                <h2>{% block page_title %}{% endblock %}</h2>
+                <div class="user-info">
+                    <span>{{ current_user.email if current_user.is_authenticated else 'Invitado' }}</span>
+                    <a href="{{ url_for('auth.logout') }}" class="logout-btn" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            </div>
             
-            {% block content %}{% endblock %}
+            <main>
+                {% block content %}{% endblock %}
+            </main>
         </div>
     </div>
-
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

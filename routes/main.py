@@ -1,5 +1,5 @@
 # dash2/routes/main.py
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
 
 main_bp = Blueprint('main_bp', __name__)
@@ -14,11 +14,11 @@ main_bp = Blueprint('main_bp', __name__)
 def about():
     return render_template('about.html')
 
-@main_bp.route('/configuracion')
-@login_required
-def settings_page():
-    flash('La página de configuración aún no está implementada.', 'info')
-    # Redirige al dashboard
-    return redirect(url_for('index'))
+# @main_bp.route('/configuracion')
+# @login_required
+# def settings_page():
+#     flash('La página de configuración aún no está implementada.', 'info')
+#     # Redirige al dashboard
+#     return redirect(url_for('index'))
     # O podrías redirigir a una página de "Acerca de" si la tienes
     # return redirect(url_for('main_bp.about'))

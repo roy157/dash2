@@ -1,49 +1,98 @@
-<!-- tienda/templates/inventario.html --> 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Inventario</title>
+    <title>TechAdmin - Inventario</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
 </head>
 <body>
-    <header>
-        <h1><a href="{{ url_for('index') }}">Dashboard</a> - Inventario</h1>
-    </header>
-    <main>
-        <h2>Inventario por Producto</h2>
-        {% if productos %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID Producto</th>
-                        <th>Nombre Producto</th>
-                        <th>Stock Actual</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for producto in productos %}
-                    <tr>
-                        <td>{{ producto.id }}</td>
-                        <td>{{ producto.nombre }}</td>
-                        <td>{{ producto.stock }}</td>
-                        <td>
-                            <a href="#">Ver Movimientos</a>
-                            </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No hay productos en el inventario.</p>
-        {% endif %}
-        <p><a href="{{ url_for('index') }}">Volver al Dashboard</a></p>
-    </main>
-    <footer>
-        <p>&copy; 2025 Mi Tienda. Todos los derechos reservados.</p>
-    </footer>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header"><i class="fas fa-laptop-code fa-2x"></i><h3>TechAdmin</h3></div>
+            <ul class="sidebar-menu">
+                <li><a href="{{ url_for('index') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="{{ url_for('products_bp.list_products') }}"><i class="fas fa-desktop"></i> Productos</a></li>
+                <li class="active"><a href="{{ url_for('inventory_bp.list_inventory') }}"><i class="fas fa-boxes"></i> Inventario</a></li>
+                <li><a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h2>Control de Inventario</h2>
+                </div>
+            
+            <main>
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Stock por Producto</h3>
+                        <div class="btn-group">
+                            <button class="btn btn-success" data-modal-target="#entry-modal"><i class="fas fa-plus-circle"></i> Registrar Entrada</button>
+                            <button class="btn btn-danger" data-modal-target="#exit-modal"><i class="fas fa-minus-circle"></i> Registrar Salida</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Precio Compra</th>
+                                <th>Stock</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto in productos %}
+                            <tr>
+                                <td>{{ producto.id }}</td>
+                                <td>{{ producto.nombre }}</td>
+                                <td>${{ "%.2f"|format(producto.precio_compra or 0.0) }}</td>
+                                <td><span class="stock-indicator high">{{ producto.stock }}</span></td>
+                                <td class="actions">
+                                    <a href="#" class="btn-icon" title="Ver Movimientos"><i class="fas fa-history"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div class="modal" id="entry-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Registrar Entrada</h3>
+                <button class="close-modal-button" data-close-button>&times;</button>
+            </div>
+            <form id="entry-form" action="{{ url_for('inventory_bp.add_entry') }}">
+                <div class="form-group"><label>Producto</label><select name="producto_id" class="form-control" required><option value="">Seleccionar...</option>{% for p in productos %}<option value="{{ p.id }}">{{ p.nombre }}</option>{% endfor %}</select></div>
+                <div class="form-group"><label>Cantidad</label><input type="number" name="cantidad_movimiento" class="form-control" required min="1"></div>
+                <div class="form-group"><label>Descripción</label><textarea name="descripcion" class="form-control" rows="3"></textarea></div>
+                <div class="form-group" style="text-align: right;"><button type="button" class="btn btn-danger" data-close-button>Cancelar</button><button type="submit" class="btn btn-success">Guardar</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="exit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Registrar Salida</h3>
+                <button class="close-modal-button" data-close-button>&times;</button>
+            </div>
+            <form id="exit-form" action="{{ url_for('inventory_bp.add_exit') }}">
+                <div class="form-group"><label>Producto</label><select name="producto_id" class="form-control" required><option value="">Seleccionar...</option>{% for p in productos %}<option value="{{ p.id }}">{{ p.nombre }}</option>{% endfor %}</select></div>
+                <div class="form-group"><label>Cantidad</label><input type="number" name="cantidad_movimiento" class="form-control" required min="1"></div>
+                <div class="form-group"><label>Descripción</label><textarea name="descripcion" class="form-control" rows="3"></textarea></div>
+                <div class="form-group" style="text-align: right;"><button type="button" class="btn btn-danger" data-close-button>Cancelar</button><button type="submit" class="btn btn-success">Guardar</button></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/inventario.js') }}"></script>
 </body>
 </html>

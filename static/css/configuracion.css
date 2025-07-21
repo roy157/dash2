@@ -1,0 +1,174 @@
+/* ======== DISEÑO GENERAL Y TARJETAS ======== */
+
+/* Contenedor principal para la página de configuración */
+.settings-container {
+    width: 100%;
+    max-width: 1200px; /* Ancho máximo para pantallas muy grandes */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Espacio entre las tarjetas */
+}
+
+/* Estilo de las "tarjetas" o secciones */
+.settings-card {
+    background-color: #ffffff;
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.settings-card h3 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 15px;
+    font-size: 1.2rem;
+    color: #343a40;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el ícono y el texto */
+}
+
+.settings-card h3 .fas {
+    color: var(--primary); /* Usa el color primario de tu tema */
+}
+
+/* Organiza los campos del formulario en filas */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    min-width: 250px;
+}
+
+
+/* ======== PANEL DE ADMINISTRADOR (TABLA) ======== */
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.table-header p {
+    margin: 0;
+    color: #6c757d;
+}
+
+/* Estilos para la tabla de usuarios */
+#user-management-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#user-management-table th, 
+#user-management-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#user-management-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+#user-management-table .btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+
+/* ======== MODAL (PARA ADMIN) ======== */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    border-bottom: none; /* Quitamos el borde del h3 general de las tarjetas */
+    padding-bottom: 0;
+    color: var(--primary);
+}
+
+.close-modal {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+    line-height: 1;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+    color: #333;
+}
+
+
+/* ======== ALERTAS (MENSAJES FLASH) ======== */
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+}
+
+.alert-success {
+    background-color: #28a745;
+}
+
+.alert-danger {
+    background-color: #dc3545;
+}

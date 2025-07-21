@@ -8,83 +8,77 @@ from datetime import datetime
 # Definimos el Blueprint para inventario
 inventory_bp = Blueprint('inventory_bp', __name__, url_prefix='/inventario')
 
-# Ruta para listar movimientos de inventario
+# --- ESTA FUNCIÓN NO CAMBIA ---
+# Ruta para listar el stock de productos (tu plantilla inventario.html)
 @inventory_bp.route('/')
 @login_required
-def list_inventory(): # <--- ¡Cambiado de 'view_inventory' a 'list_inventory'!
-    # Obtener todos los movimientos de inventario, ordenados por fecha descendente
-    movimientos = Inventario.query.order_by(Inventario.fecha_movimiento.desc()).all()
-    
-    # También puedes obtener una lista de productos para filtros o información adicional
-    productos = Producto.query.all()
+def list_inventory():
+    # Esta consulta obtiene todos los productos para mostrar su stock,
+    # que es lo que tu plantilla necesita.
+    productos = Producto.query.order_by(Producto.nombre).all()
 
-    return render_template('inventory/list.html', # Asegúrate de que este template exista
-                           movimientos=movimientos,
+    # Renderiza la plantilla principal de inventario
+    return render_template('inventario.html', 
                            productos=productos)
 
-# --- Rutas adicionales para inventario (ejemplos, puedes tener más) ---
-
+# --- ESTA FUNCIÓN SÍ SE MODIFICA ---
 # Ruta para registrar una entrada de inventario
 @inventory_bp.route('/entrada', methods=['GET', 'POST'])
 @login_required
 def add_entry():
-    if request.method == 'POST':
-        producto_id = request.form.get('producto_id', type=int)
-        cantidad = request.form.get('cantidad_movimiento', type=int) # Usar cantidad_movimiento
-        descripcion = request.form.get('descripcion')
-
-        if not producto_id or not cantidad or cantidad <= 0:
-            flash('Por favor, selecciona un producto y una cantidad válida.', 'danger')
-            return redirect(url_for('inventory_bp.add_entry'))
-        
-        try:
-            producto = Producto.query.get_or_404(producto_id)
-            
-            # Crear el movimiento de inventario
-            nuevo_movimiento = Inventario(
-                producto_id=producto.id,
-                cantidad_movimiento=cantidad, # Asegúrate de que el modelo Inventario tenga 'cantidad_movimiento'
-                tipo_movimiento='entrada',
-                fecha_movimiento=datetime.now(),
-                descripcion=descripcion
-            )
-            db.session.add(nuevo_movimiento)
-            
-            # Actualizar el stock del producto
-            producto.stock += cantidad
-            
-            db.session.commit()
-            flash('Entrada de inventario registrada exitosamente!', 'success')
-            return redirect(url_for('inventory_bp.list_inventory'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Error al registrar la entrada: {str(e)}', 'danger')
-            return redirect(url_for('inventory_bp.add_entry'))
-
-    productos = Producto.query.all()
-    return render_template('inventory/add_entry.html', productos=productos)
-
-# Ruta para registrar una salida de inventario
-@inventory_bp.route('/salida', methods=['GET', 'POST'])
-@login_required
-def add_exit():
+    # Si la petición es POST (desde el modal), devuelve JSON
     if request.method == 'POST':
         producto_id = request.form.get('producto_id', type=int)
         cantidad = request.form.get('cantidad_movimiento', type=int)
         descripcion = request.form.get('descripcion')
 
         if not producto_id or not cantidad or cantidad <= 0:
-            flash('Por favor, selecciona un producto y una cantidad válida.', 'danger')
-            return redirect(url_for('inventory_bp.add_exit'))
+            return jsonify({'success': False, 'message': 'Datos inválidos.'}), 400
+        
+        try:
+            producto = Producto.query.get_or_404(producto_id)
+            
+            nuevo_movimiento = Inventario(
+                producto_id=producto.id,
+                cantidad_movimiento=cantidad,
+                tipo_movimiento='entrada',
+                fecha_movimiento=datetime.now(),
+                descripcion=descripcion
+            )
+            db.session.add(nuevo_movimiento)
+            producto.stock += cantidad
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Entrada registrada exitosamente!'}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'success': False, 'message': f'Error en el servidor: {str(e)}'}), 500
+
+    # Si la petición es GET, renderiza la página HTML como antes
+    # Esto mantiene la compatibilidad por si tienes un enlace directo a esta página.
+    productos = Producto.query.all()
+    return render_template('inventory/add_entry.html', productos=productos)
+
+
+# --- ESTA FUNCIÓN TAMBIÉN SE MODIFICA ---
+# Ruta para registrar una salida de inventario
+@inventory_bp.route('/salida', methods=['GET', 'POST'])
+@login_required
+def add_exit():
+    # Si la petición es POST (desde el modal), devuelve JSON
+    if request.method == 'POST':
+        producto_id = request.form.get('producto_id', type=int)
+        cantidad = request.form.get('cantidad_movimiento', type=int)
+        descripcion = request.form.get('descripcion')
+
+        if not producto_id or not cantidad or cantidad <= 0:
+            return jsonify({'success': False, 'message': 'Datos inválidos.'}), 400
         
         try:
             producto = Producto.query.get_or_404(producto_id)
             
             if producto.stock < cantidad:
-                flash(f'Stock insuficiente para {producto.nombre}. Disponible: {producto.stock}', 'danger')
-                return redirect(url_for('inventory_bp.add_exit'))
+                return jsonify({'success': False, 'message': f'Stock insuficiente. Disponible: {producto.stock}'}), 400
 
-            # Crear el movimiento de inventario
             nuevo_movimiento = Inventario(
                 producto_id=producto.id,
                 cantidad_movimiento=cantidad,
@@ -93,22 +87,19 @@ def add_exit():
                 descripcion=descripcion
             )
             db.session.add(nuevo_movimiento)
-            
-            # Actualizar el stock del producto
             producto.stock -= cantidad
-            
             db.session.commit()
-            flash('Salida de inventario registrada exitosamente!', 'success')
-            return redirect(url_for('inventory_bp.list_inventory'))
+            return jsonify({'success': True, 'message': 'Salida registrada exitosamente!'}), 200
         except Exception as e:
             db.session.rollback()
-            flash(f'Error al registrar la salida: {str(e)}', 'danger')
-            return redirect(url_for('inventory_bp.add_exit'))
+            return jsonify({'success': False, 'message': f'Error en el servidor: {str(e)}'}), 500
 
+    # Si la petición es GET, renderiza la página HTML como antes
     productos = Producto.query.all()
     return render_template('inventory/add_exit.html', productos=productos)
 
-# Ruta API para obtener detalles de un movimiento de inventario (si necesitas un modal de detalle)
+# --- ESTA FUNCIÓN NO CAMBIA ---
+# Ruta API para obtener detalles de un movimiento de inventario
 @inventory_bp.route('/<int:movimiento_id>/json')
 @login_required
 def get_inventory_movement_json(movimiento_id):
